@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const uuid = require('uuid4')
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -18,7 +19,9 @@ const getProductsFromFile = cb => {
 };
 
 module.exports = class Product {
+  
   constructor(title, imageUrl, description, price) {
+    this.id = uuid()
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -36,5 +39,13 @@ module.exports = class Product {
 
   static fetchAll(cb) {
     getProductsFromFile(cb);
+  }
+
+  static findById(id, cb) {
+    getProductsFromFile(products => {
+      const product = products.find(prod => prod.id == id)
+      console.log(product)
+      cb(product)
+    })
   }
 };
