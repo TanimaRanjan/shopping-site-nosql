@@ -2,6 +2,7 @@
     width: 20rem;
     max-width: 90%;
     margin: auto;
+    display: block;
 }
 
 .product-item {
@@ -13,6 +14,11 @@
     text-transform: capitalize;
     font-size: 1.1rem;
     text-align: center;
+}
+
+.product__image {
+    width:20rem;
+    height: auto;
 }
 
 .product__price {
