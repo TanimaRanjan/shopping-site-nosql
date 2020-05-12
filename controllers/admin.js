@@ -5,9 +5,6 @@ exports.getAddProduct = (req,res,next) => {
         pageTitle:'Add Product',
         path:'/admin/add-product',
         editing:false,
-        // formsCSS:true,
-        // productCSS:true,
-        // activeAddProduct:true
     })
 }
 
@@ -17,9 +14,20 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl
     const price = req.body.price
     const description = req.body.description
+
     const product = new Product(null, title, imageUrl, description, price)
-    product.save()
-    res.redirect('/')
+     product.save().then(result =>  res.redirect('/')).catch(error => console.log(error))
+
+    // // Using sequelize 
+    // Product.create({
+    //     title,
+    //     price,
+    //     imageUrl,
+    //     description
+    // }
+    // ).then(result => console.log(result)
+    // ).catch(error => console.log(error))
+   
 }
 
 exports.getEditProduct = (req,res) => {
