@@ -9,11 +9,17 @@ const p = path.join(
 
 module.exports = class Cart {
     static addProduct(id, productPrice) {
+        console.log('Add prod')
         fs.readFile(p, (err, fileContent) => {
             let cart = { products : [], totalPrice: 0 }
             if(!err) {
-                console.log('1 ',cart)
-                cart = JSON.parse(fileContent)
+                console.log('1 filecontent ',fileContent)
+                try {
+                    cart = JSON.parse(fileContent||{})
+                } catch(error) {
+                    throw new Error(error)
+                }
+                
                 console.log('2 ', cart)
             }
 
@@ -72,7 +78,9 @@ module.exports = class Cart {
 
     static getCart(cb) {
         fs.readFile(p, (err, fileContent) => {
-            const cart = JSON.parse(fileContent)
+            
+            const cart = JSON.parse(fileContent || {})
+
             if(err) {
                 cb(null)
             } else {
