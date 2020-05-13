@@ -43,7 +43,7 @@ exports.getEditProduct = (req,res) => {
     }
 
     const prodId = req.params.productId
-    Product.findById(prodId, product => {
+    Product.findByPk(prodId).then(product => {
         if(!product) {
             return res.redirect('/')
         }
@@ -53,7 +53,7 @@ exports.getEditProduct = (req,res) => {
             editing: editMode,
             product: product
         })
-    })
+    }).catch(error => console.log(error))
 }
 
 exports.postEditProduct = (req, res) => {
@@ -83,11 +83,21 @@ exports.postDeleteProduct =  (req, res) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll(products => {
+
+    Product.findAll().then(products => {
         res.render('admin/products', {
             prods:products,
-            pageTitle:'Admin Products',
+            pageTitle:'All Products',
             path:'/admin/products'
         })
-    })
+    }
+
+    ).catch(error => console.log(error))
+    // Product.fetchAll(products => {
+    //     res.render('admin/products', {
+    //         prods:products,
+    //         pageTitle:'Admin Products',
+    //         path:'/admin/products'
+    //     })
+    // })
 }

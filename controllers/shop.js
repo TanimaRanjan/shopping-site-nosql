@@ -13,7 +13,6 @@ exports.getProducts = (req, res) => {
 
     ).catch(error => console.log(error))
 
-
     // Product.fetchAll().then(([rows, fieldData]) => {
     //     console.log(rows[0])
     //     res.render('shop/product-list', {
@@ -29,9 +28,10 @@ exports.getProducts = (req, res) => {
 
 exports.getProduct = (req, res) => {
     const productId = req.params.productId
-    Product.findById(productId).then(([product]) => {
+    Product.findByPk(productId)
+    .then((product) => {
         res.render('shop/product-detail', {
-            product: product[0],
+            product: product,
             pageTitle:product.title,
             path:'/'
         })
@@ -49,7 +49,7 @@ exports.getIndex = ( req, res) => {
     }
 
     ).catch(error => console.log(error))
-    
+
     // Product.fetchAll().then(([rows, fieldData]) => {
     //     console.log(rows[0])
     //     res.render('shop/index', {
@@ -98,7 +98,7 @@ exports.getCart = (req, res) => {
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId
     console.log('post cart')
-    Product.findById(prodId).then(([product]) => {
+    Product.findByPk(prodId).then((product) => {
         console.log(product)
         Cart.addProduct(prodId, product.price)
     })
