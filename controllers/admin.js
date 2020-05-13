@@ -43,17 +43,33 @@ exports.getEditProduct = (req,res) => {
     }
 
     const prodId = req.params.productId
-    Product.findByPk(prodId).then(product => {
-        if(!product) {
+    // Product.findByPk(prodId).then(product => {
+    //     if(!product) {
+    //         return res.redirect('/')
+    //     }
+    //     res.render('admin/edit-product', {
+    //         pageTitle:'Edit Product',
+    //         path: '/admin/edit-product',
+    //         editing: editMode,
+    //         product: product
+    //     })
+    // }).catch(error => console.log(error))
+
+
+    Product.findAll({where : {id:prodId}})
+    .then(products => {
+        if(!products) {
             return res.redirect('/')
         }
         res.render('admin/edit-product', {
-            pageTitle:'Edit Product',
+            pageTitle:products[0].title,
             path: '/admin/edit-product',
             editing: editMode,
-            product: product
+            product: products[0]
         })
-    }).catch(error => console.log(error))
+    })
+    .catch(error => console.log(error))
+
 }
 
 exports.postEditProduct = (req, res) => {
