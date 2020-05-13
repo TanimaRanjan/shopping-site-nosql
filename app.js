@@ -32,7 +32,7 @@ app.use(errorController.get404);
 
 // Syncs with DB and creates table if not exists
 sequelize.sync().then(result => {
-    console.log(result)
+    // console.log(result)
     app.listen(3000);
 }).catch(error => {
     console.log(error)

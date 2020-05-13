@@ -15,23 +15,26 @@ exports.postAddProduct = (req, res, next) => {
     const price = req.body.price
     const description = req.body.description
 
-    const product = new Product(null, title, imageUrl, description, price)
-     product.save().then(result =>  res.redirect('/')).catch(error => console.log(error))
+    // Using SQL
+    // const product = new Product(null, title, imageUrl, description, price)
+    //  product.save().then(result =>  res.redirect('/')).catch(error => console.log(error))
 
-    // // Using sequelize 
-    // Product.create({
-    //     title,
-    //     price,
-    //     imageUrl,
-    //     description
-    // }
-    // ).then(result => console.log(result)
-    // ).catch(error => console.log(error))
+    // Using sequelize 
+    console.log('IMAGE URL ', imageUrl)
+    Product.create({
+        title,
+        price,
+        imageUrl,
+        description
+    }
+    ).then(result => console.log(result)
+    ).catch(error => console.log(error))
+
+    
    
 }
 
 exports.getEditProduct = (req,res) => {
-    console.log('Editing ??? ')
     const editMode = req.query.edit;
 
     console.log(req.params.productId, editMode)
@@ -44,7 +47,6 @@ exports.getEditProduct = (req,res) => {
         if(!product) {
             return res.redirect('/')
         }
-        console.log('RENDERING')
         res.render('admin/edit-product', {
             pageTitle:'Edit Product',
             path: '/admin/edit-product',
