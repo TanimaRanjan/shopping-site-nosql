@@ -27,7 +27,10 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl,
         description
     }
-    ).then(result => console.log(result)
+    ).then(result => {
+        console.log(result)
+        res.redirect('/')
+    }
     ).catch(error => console.log(error))
 
     
@@ -79,23 +82,39 @@ exports.postEditProduct = (req, res) => {
     const updatedPrice = req.body.price
     const updatedImageUrl = req.body.imageUrl
     const updatedDesc = req.body.description
-    const updatedProduct = new Product(
-        prodId,
-        updatedTitle,
-        updatedImageUrl,
-        updatedDesc,
-        updatedPrice
-    )
-    updatedProduct.save()
-    res.redirect('/admin/products')
+    // const updatedProduct = new Product(
+    //     prodId,
+    //     updatedTitle,
+    //     updatedImageUrl,
+    //     updatedDesc,
+    //     updatedPrice
+    // )
+    // updatedProduct.save()
+
+    Product.findByPk(prodId).then(product => {
+        product.title=updatedTitle
+        product.price=updatedPrice
+        product.description=updatedDesc
+        product.imageUrl=updatedImageUrl
+        return product.save()
+        
+    }).then(result => res.redirect('/admin/products')
+    ).catch(error => console.log(err))
+    
 }
 
 
 exports.postDeleteProduct =  (req, res) => {
     console.log(req.body.productId)
     const prodId = req.body.productId
-    Product.deleteById(prodId)
-    res.redirect('/admin/products')
+    Product.findByPk(prodId).then(product => {
+        product.destroy()
+    }).then(result=> {
+        res.redirect('/admin/products')    
+    }).catch(error => console.log(error))
+    
+    // Product.deleteById(prodId)
+    
 }
 
 exports.getProducts = (req, res, next) => {

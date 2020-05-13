@@ -110,7 +110,7 @@ exports.postCart = (req, res, next) => {
     console.log(req.body)
     const prodId = req.body.productId;
     console.log(prodId)
-    Product.findById(prodId, product => {
+    Product.findByPk(prodId).then(product => {
         console.log('TRYING TO DELETE ', prodId)
         Cart.deleteProduct(prodId, product.price);
     })
