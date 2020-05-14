@@ -2,3 +2,4 @@
 ### Practice project to use Node / Express / Templating etc
 ### Utilzing MVC Design Pattern
 
+# shopping-site-nosql
