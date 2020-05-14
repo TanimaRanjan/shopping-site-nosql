@@ -19,7 +19,7 @@ main {
 .container {
   
   margin:0 auto;
-  border:1px solid black;
+  /* border:1px solid black; */
   width: 50rem;
   display: flex;
   justify-content: space-around;
