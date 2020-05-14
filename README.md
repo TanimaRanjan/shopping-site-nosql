@@ -1,6 +1,4 @@
-# Node-Exp-Shopping-Sample
+# Shopping-site-nosql
 ### Practice project to use Node / Express / Templating etc
 ### Utilzing MVC Design Pattern
-
-# shopping-site-nosql
-# shopping-site-nosql
+### Copy of Node-Exp-Shopping-Sample, then updated to use NoSQL Mongo DB
