@@ -4,7 +4,7 @@ exports.getLogin = (req, res) => {
     res.render('auth/login', {
         path:'/login',
         pageTitle:'Login',
-        isAuthenticate:false
+        isAuthenticated:false
     })
 }
 
@@ -19,4 +19,11 @@ exports.postLogin = (req, res) => {
             res.redirect('/')
         })
     }).catch(error => console.log(error))
+}
+
+exports.postLogout = (req, res) => {
+    req.session.destroy(error => {
+        console.log(error)
+        res.redirect('/')
+    })
 }
