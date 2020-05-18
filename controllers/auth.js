@@ -79,12 +79,9 @@ exports.postSignup = (req, res) => {
             })
             return user.save()
         })
-        
         .then(result => {
             res.redirect('/login')
-        }) 
-        
+        })     
     })
-    
     .catch(error => console.log(error))
 }
