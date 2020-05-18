@@ -124,3 +124,15 @@ main {
   background-color: #4381C1;
   color: white;
 }
+
+.error_message {
+  width:20rem;
+  display:flex;
+  justify-content: center;
+  color:red;
+  margin:1rem auto;
+  text-align: center;
+  /* background-color:rgba(167, 8, 8, 0.26); */
+  /* height: 2rem; */
+
+}
