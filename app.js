@@ -8,17 +8,21 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
+// const nodemailer = require('nodemailer')
+// const sendGrid = require('nodemailer-sendgrid-transport')
+
+const keys = require('./config/keys')
+
 
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
-const db = require('./config/keys').mongoURI
-const secret = require('./config/keys').secretOrKey
+
 
 const app = express();
 const store = new MongoDBStore({
-    uri:db,
+    uri:keys.mongoURI,
     collection:'sessions'
 })
 
@@ -36,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
     session({
-        secret:secret,
+        secret:keys.secretOrKey,
         resave:false,
         saveUninitialized:false,
         store:store
@@ -73,7 +77,7 @@ app.use(errorController.get404);
 
 
 
-mongoose.connect(db, { useNewUrlParser: true } )
+mongoose.connect(keys.mongoURI, { useNewUrlParser: true } )
 .then((result) => {
     // User.findOne().then(user => {
     //     if(!user) {
