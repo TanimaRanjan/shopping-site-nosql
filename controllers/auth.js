@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 
 const User = require('../models/user')
@@ -14,11 +15,14 @@ const transporter = nodemailer.createTransport(sendGrid({
 }))
 
 exports.getLogin = (req, res) => {
+    let message = req.flash('error');
+    message = message.length > 0 ? message[0] : null
+    
     res.render('auth/login', {
         path:'/login',
         pageTitle:'Login',
         isAuthenticated:false,
-        errorMessage:req.flash('error')
+        errorMessage:message
     })
 }
 
@@ -64,11 +68,14 @@ exports.postLogout = (req, res) => {
 }
 
 exports.getSignup = (req, res) => {
-    console.log(req.flash('error'))
+
+    let message = req.flash('error');
+    message = message.length > 0 ? message[0] : null
+
     res.render('auth/signup', {
         path:'/signup', 
         pageTitle:'Sign up',
-        errorMessage:req.flash('error')
+        errorMessage:message
     })
 }
 
@@ -107,6 +114,110 @@ exports.postSignup = (req, res) => {
             })
             
         })     
+    })
+    .catch(error => console.log(error))
+}
+
+
+exports.getReset = (req,res) => {
+    let message = req.flash('error')
+    if(message.length > 0) {
+        message = message[0]
+    } else {
+        message = null
+    }
+
+    res.render('auth/reset', {
+        path:'/reset',
+        pageTitle:'Reset Password',
+        errorMessage:message
+    })
+    
+}
+
+exports.postReset = (req,res) => {
+    crypto.randomBytes(32, (error, buffer) => {
+        if(error) { 
+            console.log(error)
+            return res.redirect('/reset')
+        }
+
+        const token = buffer.toString('hex')
+        User.findOne({email:req.body.email})
+        .then(user => {
+            if(!user) {
+                req.flash('error', 'Account not found')
+                return res.redirect('/reset')
+            }
+            user.resetToken = token
+            user.resetTokenExpiration = Date.now() - 360000
+            console.log('user' , user)
+            return user.save()
+        })
+        .then(result => {
+            res.redirect('/')
+            console.log(`http://localhost:3000/reset/${token}`)
+            transporter.sendMail({
+                to:req.body.email,
+                from:'shop@node-shop.com',
+                subject:'Password reset',
+                html: `
+                    <p>You requested a password reset</p>
+                    <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                `
+            })
+        })
+        .catch(error => console.log(error))
+    })
+}
+
+
+exports.getNewPassword = (req,res) => {
+    const token = req.params.token
+    console.log('TOKEN RES ', token)
+    User.findOne({resetToken:token, 
+        resetTokenExpiration: { $gt:Date.now()}
+    })
+    .then(user => {
+        console.log('userFound ',user)
+        let message = req.flash('error')
+        message = message.length > 0 ? message[0] : null
+            
+        res.render('auth/new-password', {
+            path:'/new-password',
+            pageTitle:'New Password',
+            errorMessage:message,
+            userId:user._id.toString(),
+            passwordToken:token
+        })
+    })
+    .catch(error => console.log(error))
+}
+
+exports.postNewPassword = (req,res) => {
+    const newPassword = req.body.password
+    const userId = req.body.userId
+    const passwordToken = req.body.passwordToken
+    console.log(passwordToken)
+    let reqUser 
+
+    User.findOne({
+        resetToken:passwordToken,
+        resetTokenExpiration: { $gt:Date.now()},
+        _id:userId
+    })
+    .then(user => {
+        resetUser = user
+        return bcrypt.hash(newPassword, 12)        
+    })
+    .then(hashPassword => {
+        resetUser.password = hashPassword
+        resetUser.resetToken = undefined
+        resetUser.resetTokenExpiration = undefined
+        return resetUser.save()
+    })
+    .then(result => {
+        res.redirect('/login')
     })
     .catch(error => console.log(error))
 }
