@@ -5,6 +5,7 @@ const User = require('../models/user')
 
 const nodemailer = require('nodemailer')
 const sendGrid = require('nodemailer-sendgrid-transport')
+const { validationResult } = require('express-validator');
 
 const keys = require('../config/keys')
 
@@ -22,7 +23,13 @@ exports.getLogin = (req, res) => {
         path:'/login',
         pageTitle:'Login',
         isAuthenticated:false,
-        errorMessage:message
+        errorMessage:message,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+          },
+          validationErrors: []
     })
 }
 
@@ -30,12 +37,35 @@ exports.postLogin = (req, res) => {
     const email = req.body.email
     const password = req.body.password
 
+    const errors = validationResult(req)
     // User.findById('5ebd8cc23f9b581890edda09')
+    if(!errors.isEmpty()) {
+        return res.status(402).render('auth/login' , {
+            path: '/login', 
+            pageTitle:'Login',
+            errorMessage: errors.array()[0].msg, 
+            oldInput: {
+                email,
+                password
+            },  
+            validationErrors : errors.array()
+        })
+    }
+
     User.findOne({email:email})
     .then(user => {
         if(!user) {
-            req.flash('error', 'Invalid email or password')
-            return res.redirect('/login')
+            return res.status(422).render('auth/login', {
+                path:'/login',
+                pageTitle:'Login',
+                errorMessage:'Invalid email or password!!',
+                oldInput: {
+                    email,
+                    password
+                },
+                validationErrors:[]
+            })
+
         }
         bcrypt.compare(password, user.password)
         .then(match => {
@@ -47,8 +77,18 @@ exports.postLogin = (req, res) => {
                     res.redirect('/')
                 })
             }
-            req.flash('error', 'Invalid email or password')
-            return res.redirect('/login')
+            return res.status(422).render('auth/login', {
+                path:'/login',
+                pageTitle:'Login',
+                errorMessage:'Invalid email or password',
+                oldInput: {
+                    email,
+                    password
+                },
+                validationErrors:[]
+            })
+            // req.flash('error', 'Invalid email or password')
+            // return res.redirect('/login')
         })
         .catch(error => {
             console.log(error)
@@ -75,7 +115,13 @@ exports.getSignup = (req, res) => {
     res.render('auth/signup', {
         path:'/signup', 
         pageTitle:'Sign up',
-        errorMessage:message
+        errorMessage:message,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+          },
+          validationErrors: []
     })
 }
 
@@ -84,6 +130,24 @@ exports.postSignup = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword
+
+    const errors = validationResult(req)
+    console.log('error ... ', errors)
+    if(!errors.isEmpty()) {
+        console.log(errors.array());
+
+        return res.status(422).render('auth/signup', {
+            path: '/signup',
+            pageTitle: 'Signup',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+              email,
+              password,
+              confirmPassword
+            },
+            validationErrors: errors.array()
+        })
+    }
 
 
     User.findOne({email:email})
@@ -96,8 +160,8 @@ exports.postSignup = (req, res) => {
         .hash(password, 12)
         .then(hashPassword => {
             const user = new User({
-                name:name,
-                email:email,
+                name,
+                email,
                 password:hashPassword,
                 cart:{ item:[]}
             })
@@ -105,13 +169,13 @@ exports.postSignup = (req, res) => {
         })
         .then(result => {
             res.redirect('/login')
-            return transporter.sendMail({
-                to:email,
-                from:'shop@node-shop.com',
-                subject:'Signup successful',
-                html:'<h1>You signed up successfully</h1>'
+            // return transporter.sendMail({
+            //     to:email,
+            //     from:'shop@node-shop.com',
+            //     subject:'Signup successful',
+            //     html:'<h1>You signed up successfully</h1>'
 
-            })
+            // })
             
         })     
     })
