@@ -151,12 +151,10 @@ exports.postReset = (req,res) => {
             }
             user.resetToken = token
             user.resetTokenExpiration = Date.now() - 360000
-            console.log('user' , user)
             return user.save()
         })
         .then(result => {
             res.redirect('/')
-            console.log(`http://localhost:3000/reset/${token}`)
             transporter.sendMail({
                 to:req.body.email,
                 from:'shop@node-shop.com',
@@ -174,12 +172,12 @@ exports.postReset = (req,res) => {
 
 exports.getNewPassword = (req,res) => {
     const token = req.params.token
-    console.log('TOKEN RES ', token)
+
     User.findOne({resetToken:token, 
         resetTokenExpiration: { $gt:Date.now()}
     })
     .then(user => {
-        console.log('userFound ',user)
+
         let message = req.flash('error')
         message = message.length > 0 ? message[0] : null
             
@@ -198,8 +196,8 @@ exports.postNewPassword = (req,res) => {
     const newPassword = req.body.password
     const userId = req.body.userId
     const passwordToken = req.body.passwordToken
-    console.log(passwordToken)
-    let reqUser 
+
+    let resetUser 
 
     User.findOne({
         resetToken:passwordToken,
