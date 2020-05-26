@@ -61,7 +61,9 @@ app.use((req,res, next) => {
         req.user = user
         
         next()
-    }).catch(error => console.log(error))
+    }).catch(error => {
+        next(new Error(error))
+    })
 })
 
 app.use((req,res,next) => {
@@ -75,7 +77,13 @@ app.use(shopRoutes);
 app.use(authRoutes)
 app.use(errorController.get404);
 
-
+app.use((error, req,res, next) => {
+    res.status(500).render('500', {
+        pageTitle:'Error!',
+        path:'/500',
+        isAuthenticated:req.session.isLoggedIn
+    })
+})
 
 mongoose.connect(keys.mongoURI, { useNewUrlParser: true } )
 .then((result) => {
