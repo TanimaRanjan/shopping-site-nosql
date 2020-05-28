@@ -43,6 +43,7 @@ const fileStorage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb)=>  {
+    console.log('Filtering ', file.minetype ,file.minetype === 'image/png' )
     if(
         file.minetype === 'image/png' || 
         file.minetype === 'image/jpg' ||
@@ -62,9 +63,13 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth')
  
 app.use(bodyParser.urlencoded({ extended: false }));
-//console.log(fileStorage)
-app.use(
-    multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+// //console.log(fileStorage)
+// app.use(
+//     multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+//   );
+
+  app.use(
+    multer({ storage: fileStorage }).single('image')
   );
 
 app.use(express.static(path.join(__dirname, 'public')));
