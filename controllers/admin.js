@@ -15,10 +15,15 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
 
+  //console.log('req', req)
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  // const imageUrl = req.body.imageUrl;
+  const image = req.body.image
   const price = req.body.price;
   const description = req.body.description;
+  
+  console.log('IMAGE ', image)
+  console.log('IMAGE ', req.file)
   
   const errors = validationResult(req)
 
@@ -53,7 +58,7 @@ exports.postAddProduct = (req, res, next) => {
     .save()
     .then(result => {
       // console.log(result);
-      console.log('Created Product');
+     // console.log('Created Product');
       res.redirect('/admin/products');
     })
     .catch(err => {
@@ -101,7 +106,7 @@ exports.getEditProduct = (req, res, next) => {
       //   validationErrors: []
       // });
       // res.redirect('/500');
-      
+
       const error = new Error(err)
       error.httpStatusCode = 500
       return next(error)
@@ -163,7 +168,7 @@ exports.getProducts = (req, res, next) => {
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then(products => {
-      console.log(products);
+   //   console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
