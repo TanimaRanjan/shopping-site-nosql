@@ -12,4 +12,4 @@ flash for flash message
 
 bcrypt for password encryption 
 sendgrid to send email - nodemailer, nodemail-sendgrid-transport
- 
+multer to upload and save files on server 

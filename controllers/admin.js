@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator')
 
+const fileHelper = require('../util/file');
+
 const Product = require('../models/products');
 
 exports.getAddProduct = (req, res, next) => {
@@ -166,13 +168,16 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDesc;
-      product.imageUrl = updatedImageUrl;
-      return product.save();
+      if(image) {
+        // fileHelper.deleteFile(product.imageUrl)
+        product.imageUrl = image.path;
+      }
+      return product.save().then(result => {
+        // console.log('UPDATED PRODUCT!');
+         res.redirect('/admin/products');
+       })
     })
-    .then(result => {
-     // console.log('UPDATED PRODUCT!');
-      res.redirect('/admin/products');
-    })
+   
     .catch(err => {
         const error = new Error(err)
         error.httpStatusCode = 500
