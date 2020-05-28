@@ -33,17 +33,14 @@ const csrfProtection = csrf()
 
 const fileStorage = multer.diskStorage({
     destination:(req,file,cb) => {
-        console.log('IMAGESS.... ')
         cb(null, 'images')
     },
     filename:(req,file,cb) => {
-        console.log('FILE .... ', file)
         cb(null, new Date().toISOString() + '-' + file.originalname)
     }
 })
 
 const fileFilter = (req, file, cb)=>  {
-    console.log('Filtering ', file.minetype ,file.minetype === 'image/png' )
     if(
         file.minetype === 'image/png' || 
         file.minetype === 'image/jpg' ||
@@ -68,11 +65,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //     multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 //   );
 
-  app.use(
+app.use(
     multer({ storage: fileStorage }).single('image')
   );
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
 app.use(
     session({
