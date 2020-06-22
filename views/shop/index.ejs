@@ -25,10 +25,13 @@
                             <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                         </div>
                     </article>
-                <% } %>
+                <% } %>   
+
             </div>
+            <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, prevPage: prevPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPrevPage: hasPrevPage}) %>
         <% } else { %>
             <h1>No Products Found!</h1>
         <% } %>
     </main>
 <%- include('../includes/end.ejs') %>
+
