@@ -120,7 +120,8 @@ app.use((error, req,res, next) => {
     })
 })
 
-mongoose.connect(keys.mongoURI, { useNewUrlParser: true } )
+mongoose
+.connect(keys.mongoURI, { useNewUrlParser: true } )
 .then((result) => {
     // User.findOne().then(user => {
     //     if(!user) {
@@ -135,7 +136,12 @@ mongoose.connect(keys.mongoURI, { useNewUrlParser: true } )
     //     }
     // })
     console.log('Connected to DB')
-    app.listen(3000)
+    const server = app.listen(8080)
+    // we use the http server to establish the socket 
+    const io = require('socket.io')(server)
+    io.on('connection', socket => {
+        console.log('Client Connected ')
+    })
 }).catch(error => { console.log(error )})
 
 
