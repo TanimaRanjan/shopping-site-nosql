@@ -11,8 +11,8 @@ const flash = require('connect-flash')
 const multer = require('multer')
 
 
-// const nodemailer = require('nodemailer')
-// const sendGrid = require('nodemailer-sendgrid-transport')
+const nodemailer = require('nodemailer')
+const id = require('nodemailer-id-transport')
 
 const keys = require('./config/keys')
 
@@ -99,7 +99,7 @@ app.use((req,res, next) => {
         next(new Error(error))
     })
 })
-
+ 
 app.use((req,res,next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn
     res.locals.csrfToken = req.csrfToken()
